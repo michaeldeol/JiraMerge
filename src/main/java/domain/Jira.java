@@ -1,10 +1,11 @@
 package domain;
 
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.NullProgressMonitor;
@@ -19,11 +20,7 @@ public class Jira {
 	 * 
 	 * TODO This needs to be updated to use OAuth once implemented in the JRJC Library
 	 */
-	private final ResourceBundle jiraProperties = ResourceBundle.getBundle("jira");
-	private final String URL = jiraProperties.getString("url").trim();
-	private final String USERNAME = jiraProperties.getString("username").trim();
-	private final String PASSWORD = jiraProperties.getString("password").trim();
-
+	private final Properties prop = new Properties();
 	private final JerseyJiraRestClientFactory factory;
 	private final JiraRestClient restClient;
 	private final NullProgressMonitor pm;
@@ -35,9 +32,17 @@ public class Jira {
 	 * @throws KeyStoreException 
 	 */
 	public Jira() throws URISyntaxException {
+		try {
+			prop.load(new FileInputStream("jira.properties"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		System.out.println("Connecting to Jira...");
 		this.factory = new JerseyJiraRestClientFactory();
-		this.restClient = factory.createWithBasicHttpAuthentication(new URI(this.URL), this.USERNAME, this.PASSWORD);
+		this.restClient = factory.createWithBasicHttpAuthentication(new URI(
+				prop.getProperty("url").trim()), 
+				prop.getProperty("username").trim(), 
+				prop.getProperty("password").trim());
 		this.pm = new NullProgressMonitor();
 	}
 	

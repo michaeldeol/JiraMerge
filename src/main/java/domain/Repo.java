@@ -1,10 +1,11 @@
 package domain;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeResult;
@@ -20,17 +21,13 @@ import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class Repo {
-
-	private final ResourceBundle gitProperties = ResourceBundle.getBundle("git");
-	private final String PATH = gitProperties.getString("path").trim();
-	private final String USERNAME = gitProperties.getString("username").trim();
-	private final String PASSWORD = gitProperties.getString("password").trim();
 	
-	private UsernamePasswordCredentialsProvider upc = new UsernamePasswordCredentialsProvider(this.USERNAME, this.PASSWORD);
+	private final Properties prop = new Properties();
+	private UsernamePasswordCredentialsProvider upc;
 	
 	private Git git;
 	private Repository repository;
-	private String branchName;;
+	private String branchName;
 	
 	private boolean successful = true;
 	
@@ -40,11 +37,18 @@ public class Repo {
 	 * @throws IOException
 	 */
 	public Repo(String branchName) throws IOException {
+		try {
+			prop.load(new FileInputStream("git.properties"));
+			this.upc = new UsernamePasswordCredentialsProvider(prop.getProperty("username").trim(), 
+															   prop.getProperty("password").trim());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.branchName = branchName;
 		// Setting up the Git Repo
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		this.repository = builder
-				.setGitDir(new File(this.PATH))
+				.setGitDir(new File(prop.getProperty("path").trim()))
 				.readEnvironment() // scan environment GIT_* variables
 				.findGitDir() // scan up the file system tree
 				.build();
