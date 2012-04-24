@@ -8,3 +8,8 @@ Thumbs.db
 .classpath
 .project
 .settings/*
+
+# Property Files #
+##################
+git-dev.properties
+jira-dev.properties
