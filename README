@@ -1,0 +1,6 @@
+JiraMerge:
+
+A Java Application that connects to Jira and Git to perform merges.
+Utilizes the JRJC and JGit Library.
+
+TODO - Update the README

@@ -1,0 +1,10 @@
+# OS Generated Files #
+######################
+.DS_Store*
+Thumbs.db
+
+# Hidden Project Files #
+########################
+.classpath
+.project
+.settings/*
